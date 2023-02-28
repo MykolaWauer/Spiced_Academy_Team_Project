@@ -1,11 +1,5 @@
-# Create class definitions for 3 animals with some attributes and methods
-# Snail , Turtle, Hare , python
+# Create class for customer
 
-# attributes - 
-# id
-
-# method - 
-# move
 
 import pandas as pd
 import numpy as np
