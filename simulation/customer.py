@@ -3,12 +3,12 @@ import numpy as np
 from datetime import timedelta
 
 # Import time probabilities and manipulate time column
-time_probs = pd.read_csv('../cust_times.csv')
+time_probs = pd.read_csv('../data/cust_times.csv')
 time_probs['time'] = pd.to_datetime(time_probs['time'])
 time_probs.set_index('time', inplace=True)
 
 # Load in existing customer data
-cust_probs = pd.read_csv('../probabilities.csv', index_col=0)
+cust_probs = pd.read_csv('../data/probabilities.csv', index_col=0)
 
 # Create a list of possible states that does not include 
 # entrance because no customer can return to the entrance.
