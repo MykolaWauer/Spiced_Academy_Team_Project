@@ -1,0 +1,33 @@
+digraph  {
+entrance;
+drinks;
+dairy;
+fruit;
+spices;
+checkout;
+entrance -> dairy  [key=0, label="0.2875755540631296", weight="0.2875755540631296"];
+entrance -> drinks  [key=0, label="0.1535258562793821", weight="0.1535258562793821"];
+entrance -> fruit  [key=0, label="0.3774345198119543", weight="0.3774345198119543"];
+entrance -> spices  [key=0, label="0.1814640698455339", weight="0.1814640698455339"];
+drinks -> checkout  [key=0, label="0.2156882903258969", weight="0.2156882903258969"];
+drinks -> dairy  [key=0, label="0.0108975017991158", weight="0.0108975017991158"];
+drinks -> drinks  [key=0, label="0.5985401459854015", weight="0.5985401459854015"];
+drinks -> fruit  [key=0, label="0.0878996607381515", weight="0.0878996607381515"];
+drinks -> spices  [key=0, label="0.0869744011514341", weight="0.0869744011514341"];
+dairy -> checkout  [key=0, label="0.1033436358527676", weight="0.1033436358527676"];
+dairy -> dairy  [key=0, label="0.7370609721831975", weight="0.7370609721831975"];
+dairy -> drinks  [key=0, label="0.0584995785332958", weight="0.0584995785332958"];
+dairy -> fruit  [key=0, label="0.0497892666479348", weight="0.0497892666479348"];
+dairy -> spices  [key=0, label="0.0513065467828041", weight="0.0513065467828041"];
+fruit -> checkout  [key=0, label="0.201446768359805", weight="0.201446768359805"];
+fruit -> dairy  [key=0, label="0.0958484038370813", weight="0.0958484038370813"];
+fruit -> drinks  [key=0, label="0.054804214499135", weight="0.054804214499135"];
+fruit -> fruit  [key=0, label="0.5972637207108036", weight="0.5972637207108036"];
+fruit -> spices  [key=0, label="0.050636892593175", weight="0.050636892593175"];
+spices -> checkout  [key=0, label="0.1505650167117619", weight="0.1505650167117619"];
+spices -> dairy  [key=0, label="0.1930606398217412", weight="0.1930606398217412"];
+spices -> drinks  [key=0, label="0.162979468406812", weight="0.162979468406812"];
+spices -> fruit  [key=0, label="0.0908801527932516", weight="0.0908801527932516"];
+spices -> spices  [key=0, label="0.4025147222664332", weight="0.4025147222664332"];
+checkout -> checkout  [key=0, label="1.0", weight="1.0"];
+}

@@ -11,7 +11,7 @@
 
   2.1 The customers should considered churned once they reach the checkout.
 
-  2.2 A customer should be implemented in it’s own class
+  2.2 A customer should be implemented in its own class
 
   2.3 The customers move to the next location based on a Monte Carlo Chain.
 
