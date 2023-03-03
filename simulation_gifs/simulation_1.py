@@ -3,9 +3,11 @@ import cv2
 import time
 import numpy as np
 import pandas as pd
+import glob
+import random
 
 
-CUSTOMER_IMAGE_PATH = "images/final_logo.png"
+CUSTOMER_IMAGE_PATH = 'images/customers/*'
 BACKGROUND_IMAGE_PATH = "images/resized_market.png"
 SUPERMARKET_LOGO_PATH = "images/resized_doodl.png"
 PRESENCE_PROBABILITIES_PATH = "data/average_cust_per_section.csv"
@@ -53,14 +55,17 @@ class Location:
 
 
 
-def put_customers_and_revenue(image, sections, dataframe, revenue):
+def put_customers_and_revenue(image, sections, dataframe, cus_imgs_path, revenue):
     """puts customers and info about revenue on image"""
     customers_present = dataframe[dataframe["time"] == current_time][
         "new_id"
     ].values
+    #print(customers_present)
     for i, section in enumerate(sections):
         section.customers_present = update_customers_present(customers_present, i)
         for j in range(int(section.customers_present)):
+            random_path = random.choice(cus_imgs_path)
+            img = cv2.imread(random_path)
             new_img, new_x, new_y = update_customer_values(POSITIONS, img, section, j)
             customers.append(Customer(new_img, new_x, new_y))
         revenue += int(section.customers_present * section.revenue_per_minute)
@@ -127,9 +132,17 @@ def write_text(image, text, x_position, y_position):
 
 
 if __name__ == "__main__":
-    img = cv2.imread(CUSTOMER_IMAGE_PATH)
+    #simages = glob.glob(random.choice(CUSTOMER_IMAGE_PATH))
+    #cus_img_path = random.choice(glob.glob(CUSTOMER_IMAGE_PATH))
+    cus_imgs_path = glob.glob(CUSTOMER_IMAGE_PATH)
+    print(cus_imgs_path)
+    
+    #print(random_image)
+    #print(type(CUSTOMER_IMAGE_PATH))
     background = cv2.imread(BACKGROUND_IMAGE_PATH)
     doodl = cv2.imread(SUPERMARKET_LOGO_PATH)
+
+
 
     checkout = Location("checkout", 0, 0)
     dairy = Location("dairy", 0, 5)
@@ -146,6 +159,7 @@ if __name__ == "__main__":
     df_presences = pd.read_csv(PRESENCE_PROBABILITIES_PATH)
     df_presences["time"] = pd.to_datetime(df_presences["time"]).copy()
 
+
     while True:
         t = current_time.time()
         #print(type(t.strftime('%m/%d/%Y')))
@@ -153,14 +167,19 @@ if __name__ == "__main__":
         print(current_time)
         frame = background.copy()
         total_revenue = put_customers_and_revenue(
-            frame, locations, df_presences, total_revenue
+            frame, locations, df_presences, cus_imgs_path, total_revenue
         )
         write_text(frame, t.strftime("%H:%M:%S"), 10, 30)
         write_customers_text(frame)
-        frame[183:223, 500:540] = doodl
+        frame[180:230, 500:596] = doodl
+        put_customers_and_revenue(
+            frame, locations, df_presences, cus_imgs_path, total_revenue
+        )
         cv2.imshow("frame", frame)
         customers.clear()
         current_time += pd.to_timedelta(1, unit="min")
 
         if cv2.waitKey(1) & 0xFF == ord("d"):
             cv2.destroyAllWindows()
+
+# %%
