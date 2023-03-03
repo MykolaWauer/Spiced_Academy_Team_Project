@@ -30,7 +30,7 @@ class Supermarket:
     
     def make_csv(self, df_full):
         
-        df_full.to_csv(f'../build_gif/data/{store_name}.csv')
+        df_full.to_csv(f'../data/{store_name}.csv')
 
     
 if __name__ == "__main__":
