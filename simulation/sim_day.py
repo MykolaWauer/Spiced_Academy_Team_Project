@@ -18,7 +18,7 @@ class Supermarket:
         for cust in cust_list:
             customer_name = f'{cust}'
             customer_obj = Customer(customer_name)
-            temp_df = customer_obj.next_state()
+            temp_df = customer_obj.sim_day()
             df_full = pd.concat([df_full, temp_df])
         
         fill_time = pd.to_datetime('08:00')
@@ -34,10 +34,10 @@ class Supermarket:
 
     
 if __name__ == "__main__":
-    print("Let's simulate a day in your store! \n")
-    store_name = input("What is the name of your store? ")
-    cus_no = int(input("How many customers will visit your store? "))
-    printing = input("Would you like to print? [y/n]")
+    print("\nLet's simulate a day in your store! \n")
+    store_name = input("What is the name of your store?\n")
+    cus_no = int(input("How many customers will visit your store?\n"))
+    printing = input("Would you like to print? [y/n]\n")
 
     store = Supermarket(cus_no)
     
