@@ -23,16 +23,16 @@ class Customer:
     def __init__(self, name, state='entrance'):
         self.name = name
         self.state = state
+        self.history = []
         self.time = np.random.choice(time_probs.index, p=time_probs.probability)
         self.times = [self.time]
-        self.history = [self.state]
         self.close_time = '21:51:00'
 
 
     def __repr__(self):
         return f'<Customer {self.name} in {self.state}>'
     
-    def next_state(self):
+    def sim_day(self):
         """
         Simulates one customer's entire visit to the store.
         """
@@ -45,12 +45,12 @@ class Customer:
 
             if str(self.time)[11:] == self.close_time:
                 self.state = 'checkout'
-                self.history.append('checkout')
+                self.history.append(self.state)
                 self.times.append(self.time)
                 
             else:
-                self.history.append(next_state)
                 self.times.append(self.time)
+                self.history.append(self.state)
                 self.state = next_state   
         
         df_times = pd.DataFrame(self.times)
@@ -67,3 +67,12 @@ class Customer:
         df_combined = df_combined[['time','id','location']]
         
         return df_combined
+    
+if __name__ == "__main__":
+    print("\nHello and welcome! \n")
+    cus_name = input("What is your name?\n")
+    
+    print("\nLet's see where you went today...:\n")
+
+    cus_name = Customer(cus_name)
+    print(cus_name.sim_day())
