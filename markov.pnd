@@ -1,0 +1,202 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyPClbBOBV/1ZHqYHkiNobkB",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/MykolaWauer/Spiced_Academy_Team_Project/blob/foawzi-feature/markov.pnd\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#!pip install graphviz"
+      ],
+      "metadata": {
+        "id": "ZT7AiS3v9bzX"
+      },
+      "execution_count": 1,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#!pip install Pillow"
+      ],
+      "metadata": {
+        "id": "2Zwlg_lZ4AjJ"
+      },
+      "execution_count": 2,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 3,
+      "metadata": {
+        "id": "oKRgIf2Q30KG"
+      },
+      "outputs": [],
+      "source": [
+        "#!pip install pydot"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#!pip install networkx"
+      ],
+      "metadata": {
+        "id": "Uvx191Hk6qej"
+      },
+      "execution_count": 4,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import pydot\n",
+        "import networkx as nx\n",
+        "import pandas as pd\n",
+        "\n",
+        "#Transition probabilities\n",
+        "df_Q = pd.read_csv('probabilities.csv', index_col=0)\n",
+        "\n",
+        "#Possible states\n",
+        "states = ['entrance','drinks','dairy','fruit','spices','checkout']\n",
+        "\n",
+        "# create a function that maps transition probability dataframe\n",
+        "# to markov edges and weights\n",
+        "\n",
+        "def _get_markov_edges(Q):\n",
+        "    edges = {}\n",
+        "    for col in Q.columns:\n",
+        "        for idx in Q.index:\n",
+        "            edges[(idx,col)] = Q.loc[idx,col]\n",
+        "    return edges\n",
+        "\n",
+        "edges_wts = _get_markov_edges(df_Q)\n",
+        "#pprint(edges_wts)\n",
+        "\n",
+        "# create graph object\n",
+        "G = nx.MultiDiGraph()\n",
+        "\n",
+        "# nodes correspond to states\n",
+        "G.add_nodes_from(states)\n",
+        "print(f'Nodes:\\n{G.nodes()}\\n')\n",
+        "\n",
+        "# edges represent transition probabilities\n",
+        "for k, v in edges_wts.items():\n",
+        "\n",
+        "    if v > 0.0:\n",
+        "        tmp_origin, tmp_destination = k[0], k[1]\n",
+        "        G.add_edge(tmp_origin, tmp_destination, weight=v, label=v)\n",
+        "\n",
+        "pos = nx.drawing.nx_pydot.graphviz_layout(G, prog='dot')\n",
+        "nx.draw_networkx(G, pos)\n",
+        "\n",
+        "# create edge labels for jupyter plot but is not necessary\n",
+        "edge_labels = {(n1,n2):d['label'] for n1,n2,d in G.edges(data=True)}\n",
+        "nx.draw_networkx_edge_labels(G , pos, edge_labels=edge_labels)\n",
+        "nx.drawing.nx_pydot.write_dot(G, 'markov.dot')\n",
+        "\n",
+        "(graph,) = pydot.graph_from_dot_file('markov.dot')\n",
+        "graph.write_png('markov.png')"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "XgwC04Eu39u7",
+        "outputId": "2d3ee6a1-74a7-45cc-e50e-aada4a97915f"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Nodes:\n",
+            "['entrance', 'drinks', 'dairy', 'fruit', 'spices', 'checkout']\n",
+            "\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "<ipython-input-5-230797eae61a>:38: DeprecationWarning: nx.nx_pydot.graphviz_layout depends on the pydot package, which hasknown issues and is not actively maintained. Consider usingnx.nx_agraph.graphviz_layout instead.\n",
+            "\n",
+            "See https://github.com/networkx/networkx/issues/5723\n",
+            "  pos = nx.drawing.nx_pydot.graphviz_layout(G, prog='dot')\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from PIL import Image\n",
+        "\n",
+        "IN_PATH = \"markov.png\"\n",
+        "OUT_PATH = \"resized_markov.png\"\n",
+        "\n",
+        "def white_square(source_image):\n",
+        "    size = tuple([2*i for i in source_image.size])\n",
+        "    layer = Image.new(\"RGB\", size, (255, 255, 255))\n",
+        "    layer.paste(\n",
+        "        source_image,\n",
+        "        tuple(map(lambda x: int((x[0] - x[1]) / 2), zip(size, source_image.size))),\n",
+        "    )\n",
+        "    return layer\n",
+        "\n",
+        "if __name__ == \"__main__\":\n",
+        "    img = Image.open(IN_PATH)\n",
+        "    framed_img = white_square(img)\n",
+        "    framed_img = framed_img.resize((100, 100), Image.ANTIALIAS)\n",
+        "    framed_img.save(OUT_PATH)"
+      ],
+      "metadata": {
+        "id": "q9kKYzj13_iM"
+      },
+      "execution_count": 6,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [],
+      "metadata": {
+        "id": "IHfsfkx484wm"
+      },
+      "execution_count": 5,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [],
+      "metadata": {
+        "id": "76cMSYqwBAQQ"
+      },
+      "execution_count": 5,
+      "outputs": []
+    }
+  ]
+}
