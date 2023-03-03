@@ -1,5 +1,5 @@
 import pandas as pd
-from customer import Customer
+from testing_customer import Customer
 
 class Supermarket:
     """

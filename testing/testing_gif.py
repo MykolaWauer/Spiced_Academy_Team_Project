@@ -5,15 +5,15 @@ import numpy as np
 import pandas as pd
 
 
-CUSTOMER_IMAGE_PATH = "images/final_logo.png"
-BACKGROUND_IMAGE_PATH = "images/resized_market.png"
-SUPERMARKET_LOGO_PATH = "images/resized_doodl.png"
-PRESENCE_PROBABILITIES_PATH = "data/average_cust_per_section.csv"
-POSITIONS = pd.read_json("data/positions.json")
+CUSTOMER_IMAGE_PATH = "../build_gif/images/final_logo.png"
+BACKGROUND_IMAGE_PATH = "../build_gif/images/resized_market.png"
+SUPERMARKET_LOGO_PATH = "../build_gif/images/resized_doodl.png"
+PRESENCE_PROBABILITIES_PATH = "../build_gif/data/test_cust.csv"
+POSITIONS = pd.read_json("../build_gif/data/positions.json")
 START_TIME = "08:00:00"
 
 
-class Customer:
+class Character:
     """
     Customers for supermarket simulation.
     """
@@ -56,13 +56,14 @@ class Location:
 def put_customers_and_revenue(image, sections, dataframe, revenue):
     """puts customers and info about revenue on image"""
     customers_present = dataframe[dataframe["time"] == current_time][
-        "new_id"
+        "id"
     ].values
+    print(customers_present)
     for i, section in enumerate(sections):
         section.customers_present = update_customers_present(customers_present, i)
         for j in range(int(section.customers_present)):
             new_img, new_x, new_y = update_customer_values(POSITIONS, img, section, j)
-            customers.append(Customer(new_img, new_x, new_y))
+            customers.append(Character(new_img, new_x, new_y))
         revenue += int(section.customers_present * section.revenue_per_minute)
     for customer in customers:
         customer.draw(image)
@@ -72,6 +73,7 @@ def put_customers_and_revenue(image, sections, dataframe, revenue):
 
 def update_customers_present(updated_list, index):
     """updates customers present for location"""
+    #print(updated_list)
     new_presence = np.random.poisson(updated_list[index])
     if new_presence > 8:
         new_presence = 8
